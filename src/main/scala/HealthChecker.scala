@@ -22,37 +22,59 @@ object HealthChecker {
       def run() {
 
         //--------------------------------------------------
+        // add symbols in the portfolios table to symbolsToChk
+        //--------------------------------------------------
+        Config.addSymToChk(DBProcessor.getSymFromPortfoliosTbl)
+        //--------------------------------------------------
+
+        //--------------------------------------------------
         if (mode == "static" || mode == "full") {
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("daily_hsi_price:")
           print(Config.NOCOLOUR)
           val (ts, p) = DBProcessor.checkDailyHSITbl
           println(indentation + "HSI timestamp: " + ts + " [" + p + "]")
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("daily_pnl")
           print(Config.NOCOLOUR)
           DBProcessor.checkPnL("daily_pnl", -10, 0).foreach(s => println(indentation + s))
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("market_data_daily_hk_stock")
           print(Config.NOCOLOUR)
           DBProcessor.checkMktData("market_data_daily_hk_stock", "close").foreach(printlnWithIndentation)
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("market_data_hourly_hk_stock")
           print(Config.NOCOLOUR)
           DBProcessor.checkMktData("market_data_hourly_hk_stock", "close").foreach(printlnWithIndentation)
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("trades:")
           print(Config.NOCOLOUR)
           DBProcessor.getTrades.foreach(printlnWithIndentation)
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("portfolios:")
           print(Config.NOCOLOUR)
           DBProcessor.getPort.foreach(printlnWithIndentation)
 
-          print(Config.YELLOW)
+          print(Config.LIGHTGREEN)
           println("trading_account:")
           print(Config.NOCOLOUR)
           DBProcessor.getTradingAc.foreach(printlnWithIndentation)
+        }
+
+        if (mode == "rt" || mode == "full") {
+          print(Config.YELLOW)
+          println("intraday_pnl")
+          print(Config.NOCOLOUR)
+          DBProcessor.checkPnL("intraday_pnl", 0, -5).foreach(s => println(indentation + s))
+          print(Config.YELLOW)
+          println("intraday_pnl_per_strategy")
+          print(Config.NOCOLOUR)
+          DBProcessor.checkIntradayPnLPerSty.foreach(s => println(indentation + s))
+          print(Config.YELLOW)
+          println("market_data_intraday")
+          print(Config.NOCOLOUR)
+          DBProcessor.checkMktData("market_data_intraday", "nominal_price").foreach(printlnWithIndentation)
+
         }
 
         if (mode == "cons" || mode == "full") {
@@ -86,27 +108,7 @@ object HealthChecker {
 
         }
 
-        println("--------------------------------------------------")
-        if (mode == "rt" || mode == "full") {
-          print(Config.YELLOW)
-          println("intraday_pnl")
-          print(Config.NOCOLOUR)
-          DBProcessor.checkPnL("intraday_pnl", 0, -5).foreach(s => println(indentation + s))
-          print(Config.YELLOW)
-          println("intraday_pnl_per_strategy")
-          print(Config.NOCOLOUR)
-          DBProcessor.checkIntradayPnLPerSty.foreach(s => println(indentation + s))
-          print(Config.YELLOW)
-          println("market_data_intraday")
-          print(Config.NOCOLOUR)
-          DBProcessor.checkMktData("market_data_intraday", "nominal_price").foreach(printlnWithIndentation)
-
-        }
-
         //--------------------------------------------------
-
-        println("--------------------------------------------------")
-        println("Thread thdDBChecker ends...")
 
       }
     })
@@ -120,6 +122,5 @@ object HealthChecker {
     // }
     //--------------------------------------------------
 
-    println("HealthChecker ended")
   }
 }

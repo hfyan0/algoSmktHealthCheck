@@ -187,6 +187,22 @@ object DBProcessor {
 
   }
 
+  def getSymFromPortfoliosTbl(): Set[String] = {
+    val _conn = lsConn.head
+
+    var rtnls = List[String]()
+    try {
+      val prep = _conn.prepareStatement("select instrument_id from portfolios")
+      val rs = prep.executeQuery()
+
+      while (rs.next) {
+        rtnls = rtnls :+ rs.getString("instrument_id")
+      }
+
+    }
+    rtnls.toSet
+  }
+
   def getTradingAc(): List[String] = {
     val _conn = lsConn.head
 
@@ -247,11 +263,11 @@ object DBProcessor {
       })
     }
 
-//--------------------------------------------------
-// the actual checking:
-// 1. trades vs trading_account
-// 2. trading_account cash = avail_cash + holding_cash
-//--------------------------------------------------
+    //--------------------------------------------------
+    // the actual checking:
+    // 1. trades vs trading_account
+    // 2. trading_account cash = avail_cash + holding_cash
+    //--------------------------------------------------
     l1.zip(l2).forall(x => Math.abs((Config.initialCapital - x._1) - x._2) < Config.EPSILON) &&
       l3.forall(x => Math.abs(x._1 - x._2 - x._3) < Config.EPSILON)
 

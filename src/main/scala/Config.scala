@@ -46,6 +46,7 @@ object Config {
       })
 
       initialCapital = prop.getProperty("initialCapital").toDouble
+      symbolsToChk = prop.getProperty("basicSymbolsToCheck").split(",").toSet
 
     }
     catch {
@@ -57,6 +58,10 @@ object Config {
     }
   }
 
+  def addSymToChk(setSym: Set[String]) {
+    symbolsToChk = symbolsToChk.union(setSym)
+  }
+
   //--------------------------------------------------
   // JDBC
   //--------------------------------------------------
@@ -64,9 +69,9 @@ object Config {
   var jdbcUser = List[String]()
   var jdbcPwd = List[String]()
 
-  var symbolsToChk: Set[String] = Set("00941", "00005", "00388")
+  var symbolsToChk = Set[String]()
   var initialCapital = 0.0
 
   var EPSILON = 1.0
-  val sty: Set[String] = Set("B2_HK","s1")
+  val sty: Set[String] = Set("B2_HK", "s1")
 }
