@@ -73,5 +73,8 @@ object Config {
   var initialCapital = 0.0
 
   var EPSILON = 1.0
-  val sty: Set[String] = Set("B2_HK", "s1")
+  val sty: Set[Int] = Set(1,2)
+
+  val sleepTime = 20000
+  val textWidth = 40
 }
