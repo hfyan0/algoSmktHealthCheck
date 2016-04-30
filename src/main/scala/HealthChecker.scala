@@ -1,4 +1,5 @@
-import org.joda.time.{DateTime, LocalDate, LocalTime}
+import org.nirvana._
+import org.joda.time.{DateTime, LocalDate, LocalTime, Period, Duration, Days}
 import org.joda.time.format.DateTimeFormat
 
 object HealthChecker {
@@ -83,7 +84,8 @@ object HealthChecker {
 
             {
               printWithColour("daily_pnl", Config.LIGHTPURPLE, Config.textWidth)
-              val (b, ls) = DBProcessor.checkPnL("daily_pnl", -1, 0)
+              val iD = Days.daysBetween(prevTrdgDay, SUtil.getCurrentDateTime(HongKong())).getDays()
+              val (b, ls) = DBProcessor.checkPnL("daily_pnl", -iD, 0)
               printPassOrFail(b)
               if (detailMode)
                 ls.foreach(printlnWithIndentation)
