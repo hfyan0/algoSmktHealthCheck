@@ -78,7 +78,7 @@ object HealthChecker {
               printWithColour("daily_hsi_price:", Config.LIGHTPURPLE, Config.textWidth)
               val (b, ts, p) = DBProcessor.checkDailyHSITbl(prevTrdgDay)
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 println(indentation + "HSI timestamp: " + ts + " [" + p + "]")
             }
 
@@ -87,7 +87,7 @@ object HealthChecker {
               val iD = Days.daysBetween(prevTrdgDay, SUtil.getCurrentDateTime(HongKong())).getDays()
               val (b, ls) = DBProcessor.checkPnL("daily_pnl", -iD, 0)
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -95,7 +95,7 @@ object HealthChecker {
               printWithColour("market_data_daily_hk_stock", Config.LIGHTPURPLE, Config.textWidth)
               val (b, ls) = DBProcessor.checkMktData("market_data_daily_hk_stock", "close", prevTrdgDay)
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -103,7 +103,7 @@ object HealthChecker {
               printWithColour("market_data_hourly_hk_stock", Config.LIGHTPURPLE, Config.textWidth)
               val (b, ls) = DBProcessor.checkMktData("market_data_hourly_hk_stock", "close", prevTrdgDay)
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -125,7 +125,7 @@ object HealthChecker {
               printWithColour("intraday_pnl", Config.YELLOW, Config.textWidth)
               val (b, ls) = DBProcessor.checkPnL("intraday_pnl", 0, -5)
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -133,7 +133,7 @@ object HealthChecker {
               printWithColour("intraday_pnl_per_strategy", Config.YELLOW, Config.textWidth)
               val (b, ls) = DBProcessor.checkIntradayPnLPerSty
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -141,7 +141,7 @@ object HealthChecker {
               printWithColour("market_data_intraday", Config.YELLOW, Config.textWidth)
               val (b, ls) = DBProcessor.checkMktData("market_data_intraday", "nominal_price", prevTrdgDay)
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -155,7 +155,7 @@ object HealthChecker {
               printWithColour("Consistency trades vs trading_account", Config.LIGHTCYAN, Config.textWidth)
               val (b, ls) = DBProcessor.checkTradesAgstTradingAc
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls.foreach(printlnWithIndentation)
             }
 
@@ -163,7 +163,7 @@ object HealthChecker {
               printWithColour("Consistency signals vs trades", Config.LIGHTCYAN, Config.textWidth)
               val (b, ls1) = DBProcessor.checkSignalAgstTrades
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls1.foreach(println)
             }
 
@@ -171,7 +171,7 @@ object HealthChecker {
               printWithColour("Consistency orders vs trades", Config.LIGHTCYAN, Config.textWidth)
               val (b, ls1) = DBProcessor.checkOrdersAgstTrades
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls1.foreach(println)
             }
 
@@ -179,11 +179,12 @@ object HealthChecker {
               printWithColour("Consistency orders itself", Config.LIGHTCYAN, Config.textWidth)
               val (b, ls1) = DBProcessor.checkOrders
               printPassOrFail(b)
-              if (detailMode)
+              if (detailMode || !b)
                 ls1.foreach(println)
             }
 
             {
+              DBProcessor.setHoldinCashToZero
               printWithColour("Consistency trading_account", Config.LIGHTCYAN, Config.textWidth)
               printPassOrFail(DBProcessor.checkTradingAc1)
             }

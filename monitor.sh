@@ -1,8 +1,8 @@
 #!/bin/bash
 
-BIN=./target/universal/stage/bin/algo_supermarket_health_check 
+#BIN=./target/universal/stage/bin/algo_supermarket_health_check 
 DMTH=/home/$(whoami)/Dropbox/utilities/dmath
-#BIN="java -jar algo_supermarket_health_check-assembly-1.0-SNAPSHOT.jar"
+BIN="java -jar algo_supermarket_health_check-assembly-1.0-SNAPSHOT.jar"
 PREV_TRADING_DAY=xxx
 PROP1=pdn.properties
 PROP2=uat.properties

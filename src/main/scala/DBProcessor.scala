@@ -91,6 +91,7 @@ object DBProcessor {
   def checkMktData(tbl: String, field: String, ptd: DateTime): (Boolean, List[String]) = {
     val _conn = lsConn.head
 
+    var presentSym = Set[String]()
     var resultLs = List[String]()
 
     try {
@@ -103,12 +104,16 @@ object DBProcessor {
         val rs = prep.executeQuery()
 
         while (rs.next) {
-          resultLs = resultLs :+ rs.getString("timestamp") + delimiter + rs.getString("instrument_id") + delimiter + rs.getDouble(field)
+          // resultLs = resultLs :+ rs.getString("timestamp") + delimiter + rs.getString("instrument_id") + delimiter + rs.getDouble(field)
+          presentSym += rs.getString("instrument_id")
         }
       })
     }
 
-    (resultLs.length == Config.symbolsToChk.size, resultLs)
+    resultLs = resultLs :+ "Missing symbols:"
+    resultLs = resultLs :+ Config.symbolsToChk.diff(presentSym).toString
+
+    (presentSym.size == Config.symbolsToChk.size, resultLs)
   }
 
   def getPort(): List[String] = {
@@ -414,6 +419,16 @@ object DBProcessor {
       lsShdBeZero.forall(Math.abs(_) < 0.5),
       l1)
 
+  }
+
+  def setHoldinCashToZero() {
+    val _conn = lsConn.head
+
+    val statement = _conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
+
+    val prep1 = _conn.prepareStatement("update trading_account set holding_cash=0 where holding_cash > -0.1 and holding_cash < 0.1")
+    val rs1 = prep1.executeUpdate()
+    _conn.commit
   }
 
   def closeConn(): Unit = {
